@@ -1,0 +1,10 @@
+{
+  "files.autoSave": "afterDelay",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "prettier.configPath": ".prettierrc",
+  "prettier.requireConfig": true,
+  "prettier.prettierPath": "./node_modules/prettier",
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
