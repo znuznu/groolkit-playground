@@ -6,13 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "fmt": "prettier --write --config .prettierrc \"./**/*{.tsx,.ts}\"",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@chakra-ui/react": "1.8.8",
     "@emotion/react": "11.9.0",
     "@emotion/styled": "11.8.1",
-    "@react-three/drei": "^9.7.1",
+    "@react-three/drei": "9.7.1",
     "@react-three/fiber": "8.0.13",
     "@znuznu/groolkit": "0.10.0",
     "framer-motion": "6.2.6",
@@ -26,7 +28,12 @@
     "@types/react": "18.0.1",
     "eslint": "8.9.0",
     "eslint-config-next": "12.1.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^12.4.1",
     "prettier": "2.5.1",
     "typescript": "4.5.5"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": "prettier --write --config .prettierrc"
   }
 }
