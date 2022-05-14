@@ -19,13 +19,13 @@ const Footer = () => {
               as={FaGithub}
               w={8}
               h={8}
-              color={'gray.400'}
+              color={'gray.500'}
               _hover={{ color: 'gray.600' }}
             />
           </Link>
         </Flex>
         <Flex justify="center">
-          <Text fontStyle="italic" size="12px" mb={5} color={'gray.400'}>
+          <Text fontStyle="italic" size="12px" mb={5} color={'gray.500'}>
             Groolkit and Groolkit playground © Arthur Fröhlich - MIT license
           </Text>
         </Flex>
