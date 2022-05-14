@@ -240,7 +240,7 @@ const Playground = () => {
         }
       }
     }
-  }, [cursors]);
+  }, [cursors, grid, currentAlgorithm]);
 
   useEffect(() => {
     setCursors({ first: undefined, second: undefined });
