@@ -25,26 +25,12 @@ import TileMesh from './TileMesh';
 import useKeyPress from '../../hooks/useKeyPress';
 import Controls from './Controls';
 
+import dungeonPreset from '../../presets/dungeon';
+import nonePreset from '../../presets/none';
+
 const GRID_SIZE = 24;
 const BUILD_CAMERA_V3: Vector3 = [0, 8.5, 0];
 const DEFAULT_CAMERA_V3: Vector3 = BUILD_CAMERA_V3;
-
-const getEmptyGrid = (cols: number, rows: number): Tile[][] => {
-  let grid: Tile[][] = [];
-
-  for (let i = 0; i < rows; i++) {
-    grid[i] = [];
-    for (let j = 0; j < cols; j++) {
-      grid[i][j] = {
-        position: { x: i, y: j },
-        kind: TileKind.EMPTY,
-        isCrossed: false
-      };
-    }
-  }
-
-  return grid;
-};
 
 enum Mode {
   BUILD = 'BUILD',
@@ -57,6 +43,46 @@ export enum MouseButton {
   RIGHT = 'RIGHT'
 }
 
+const algorithmOptionGroups: {
+  label: string;
+  options: { value: GkAlgorithm; displayName: string }[];
+}[] = [
+  {
+    label: 'FOV',
+    options: [{ value: 'rsc', displayName: 'Recursive Shadow Casting' }]
+  },
+  {
+    label: 'Path',
+    options: [
+      { value: 'astar4', displayName: 'A* (Orthogonal)' },
+      { value: 'astar8', displayName: 'A* (Diagonal)' },
+      { value: 'dijkstra4', displayName: 'Dijkstra (Orthogonal)' },
+      { value: 'dijkstra8', displayName: 'Dijkstra (Diagonal)' }
+    ]
+  },
+  {
+    label: 'Flood',
+    options: [{ value: 'floodFill', displayName: 'Flood filling' }]
+  },
+  {
+    label: 'Line',
+    options: [{ value: 'lineLerp', displayName: 'Linear interpolation' }]
+  }
+];
+
+type Presets = 'dungeon' | 'none';
+const presetsOptionGroups: {
+  label?: string;
+  options: { value: 'dungeon' | 'none'; displayName: string }[];
+}[] = [
+  {
+    options: [
+      { value: 'none', displayName: 'None' },
+      { value: 'dungeon', displayName: 'Dungeon' }
+    ]
+  }
+];
+
 type Cursors = {
   first?: Position;
   second?: Position;
@@ -64,7 +90,8 @@ type Cursors = {
 
 const Playground = () => {
   const [currentAlgorithm, setCurrentAlgorithm] = useState<GkAlgorithm>('astar4');
-  const [grid, setGrid] = useState(getEmptyGrid(GRID_SIZE, GRID_SIZE));
+  const [currentPreset, setCurrentPreset] = useState<Presets>('none');
+  const [grid, setGrid] = useState(nonePreset);
   const [canvasSize] = useState(500);
   const [result, setResult] = useState<GkResult | undefined>(undefined);
   const [cursors, setCursors] = useState<Cursors>({
@@ -157,9 +184,14 @@ const Playground = () => {
     }
   };
 
-  const handleSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelectAlgorithmChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // @ts-ignore
     setCurrentAlgorithm(event.target.value);
+  };
+
+  const handleSelectPresetChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // @ts-ignore
+    setCurrentPreset(event.target.value);
   };
 
   const isTileCrossed = (tile: Tile): boolean => {
@@ -250,6 +282,20 @@ const Playground = () => {
   useEffect(() => {
     setCursors({ first: undefined, second: undefined });
     setResult(undefined);
+
+    switch (currentPreset) {
+      case 'none':
+        setGrid(nonePreset);
+        break;
+      case 'dungeon':
+        setGrid(dungeonPreset);
+        break;
+    }
+  }, [currentPreset]);
+
+  useEffect(() => {
+    setCursors({ first: undefined, second: undefined });
+    setResult(undefined);
   }, [mode]);
 
   return (
@@ -263,7 +309,18 @@ const Playground = () => {
         p={3}
       >
         <Box mr={5}>
-          <Selector onChange={handleSelectChange} />
+          <Selector
+            title="Presets"
+            optionGroups={presetsOptionGroups}
+            defaultValue="none"
+            onChange={handleSelectPresetChange}
+          />
+          <Selector
+            title="Algorithm"
+            optionGroups={algorithmOptionGroups}
+            defaultValue="astar4"
+            onChange={handleSelectAlgorithmChange}
+          />
           <Result result={result} />
         </Box>
         <Flex direction="column">
